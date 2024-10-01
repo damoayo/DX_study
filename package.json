@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "touch out/.nojekyll && gh-pages -d out --dotfiles"
+    "deploy": "echo.> out\\.nojekyll && gh-pages -d out --dotfiles"
   },
   "dependencies": {
     "devextreme": "^24.1.6",

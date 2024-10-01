@@ -22,7 +22,8 @@ import {
   getOrderCount,
   addOrder,
   Product,
-} from "./data.ts";
+} from "./data";
+import { Order } from "./data";
 
 const dataSource = new DataSource({
   store: productsStore,
@@ -35,7 +36,7 @@ const getDetailGridDataSource = (product: Product) => ({
   filter: ["ProductID", "=", product.ProductID],
 });
 
-const getAmount = (order) => order.UnitPrice * order.Quantity;
+const getAmount = (order: Order) => order.UnitPrice * order.Quantity;
 
 const detailRender = (detail: DataGridTypes.MasterDetailTemplateData) => (
   <DataGrid

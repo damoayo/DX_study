@@ -28,7 +28,7 @@ export interface Order {
   OrderDate: Date;
   ShipCity: string;
   ProductID: number;
-  UnitPrices: number;
+  UnitPrice: number;
   Quantity: number;
 }
 const orders: Order[] = [];

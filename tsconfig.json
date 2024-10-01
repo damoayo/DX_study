@@ -21,6 +21,14 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/devextreme-license.js", "app/detail/data.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/devextreme-license.js",
+    "app/detail/data.js",
+    "app/data.ts"
+  ],
   "exclude": ["node_modules"]
 }
