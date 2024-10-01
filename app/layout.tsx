@@ -1,6 +1,15 @@
+import config from "devextreme/core/config";
+import { licenseKey } from "./devextreme-license";
+
+config({ licenseKey });
+
+import "devextreme/dist/css/dx.common.css";
+import "devextreme/dist/css/dx.light.css"; // 원하는 테마로 변경 가능
+
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import Detail from "./detail/page";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,10 +33,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`dx-viewport ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Detail />
         {children}
       </body>
     </html>

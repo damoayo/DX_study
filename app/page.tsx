@@ -1,101 +1,152 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import config from "devextreme/core/config";
+import { licenseKey } from "./devextreme-license";
+
+config({ licenseKey });
+
+import React, { useEffect, useState } from "react";
+import DataGrid, {
+  Column,
+  Summary,
+  TotalItem,
+  MasterDetail,
+  Paging,
+  DataGridTypes,
+} from "devextreme-react/data-grid";
+import { Slider, SliderTypes, Tooltip } from "devextreme-react/slider";
+import DataSource from "devextreme/data/data_source";
+import {
+  productsStore,
+  ordersStore,
+  getOrderCount,
+  addOrder,
+  Product,
+} from "./data.ts";
+
+const dataSource = new DataSource({
+  store: productsStore,
+  reshapeOnPush: true,
+});
+
+const getDetailGridDataSource = (product: Product) => ({
+  store: ordersStore,
+  reshapeOnPush: true,
+  filter: ["ProductID", "=", product.ProductID],
+});
+
+const getAmount = (order) => order.UnitPrice * order.Quantity;
+
+const detailRender = (detail: DataGridTypes.MasterDetailTemplateData) => (
+  <DataGrid
+    dataSource={getDetailGridDataSource(detail.data)}
+    repaintChangesOnly={true}
+    columnAutoWidth={true}
+    showBorders={true}
+  >
+    <Paging defaultPageSize={5} />
+    <Column dataField="OrderID" dataType="number" />
+    <Column dataField="ShipCity" dataType="string" />
+    <Column
+      dataField="OrderDate"
+      dataType="datetime"
+      format="yyyy/MM/dd HH:mm:ss"
+    />
+    <Column dataField="UnitPrice" dataType="number" format="currency" />
+    <Column dataField="Quantity" dataType="number" />
+    <Column
+      caption="Amount"
+      dataType="number"
+      format="currency"
+      allowSorting={true}
+      calculateCellValue={getAmount}
+    />
+    <Summary>
+      <TotalItem column="OrderID" summaryType="count" />
+      <TotalItem column="Quantity" summaryType="sum" displayFormat="{0}" />
+      <TotalItem
+        column="Amount"
+        summaryType="sum"
+        displayFormat="{0}"
+        valueFormat="currency"
+      />
+    </Summary>
+  </DataGrid>
+);
+
+const Home = () => {
+  const [updateFrequency, setUpdateFrequency] = useState(100);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (getOrderCount() > 500000) {
+        return;
+      }
+
+      for (let i = 0; i < updateFrequency / 20; i += 1) {
+        addOrder();
+      }
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [updateFrequency]);
+
+  const onUpdateFrequencyChanged = (e: SliderTypes.ValueChangedEvent) => {
+    setUpdateFrequency(e.value);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="demo-container">
+      <DataGrid
+        dataSource={dataSource}
+        repaintChangesOnly={true}
+        columnAutoWidth={true}
+        showBorders={true}
+      >
+        <Paging defaultPageSize={10} />
+        <Column dataField="ProductName" dataType="string" />
+        <Column dataField="UnitPrice" dataType="number" format="currency" />
+        <Column dataField="OrderCount" dataType="number" />
+        <Column dataField="Quantity" dataType="number" />
+        <Column dataField="Amount" dataType="number" format="currency" />
+        <Summary>
+          <TotalItem column="ProductName" summaryType="count" />
+          <TotalItem
+            column="Amount"
+            summaryType="sum"
+            displayFormat="{0}"
+            valueFormat="currency"
+          />
+          <TotalItem
+            column="OrderCount"
+            summaryType="sum"
+            displayFormat="{0}"
+          />
+        </Summary>
+        <MasterDetail enabled={true} render={detailRender}></MasterDetail>
+      </DataGrid>
+      <div className="options">
+        <div className="caption">Options</div>
+        <div className="option">
+          <span>Update frequency:</span>
+          <Slider
+            min={10}
+            step={10}
+            max={5000}
+            value={updateFrequency}
+            onValueChanged={onUpdateFrequencyChanged}
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <Tooltip
+              enabled={true}
+              format="#0 per second"
+              showMode="always"
+              position="top"
+            ></Tooltip>
+          </Slider>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
-}
+};
+
+export default Home;
