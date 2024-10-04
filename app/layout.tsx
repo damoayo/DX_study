@@ -10,6 +10,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Detail from "./detail/page";
+import Stock from "./stock/page";
+import LocalArray from "./localArray/page";
+import InfiniteScroll from "./InfiniteScrolling/page";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,7 +40,10 @@ export default function RootLayout({
       <body
         className={`dx-viewport ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Detail />
+        {/* <InfiniteScroll /> */}
+        {/* <LocalArray /> */}
+        {/* <Stock /> */}
+        {/* <Detail /> */}
         {children}
       </body>
     </html>

@@ -1,10 +1,5 @@
 "use client";
 
-import config from "devextreme/core/config";
-import { licenseKey } from "./devextreme-license";
-
-config({ licenseKey });
-
 import React from "react";
 import DataGrid from "devextreme-react/data-grid";
 

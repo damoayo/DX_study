@@ -29,6 +29,6 @@
     "app/devextreme-license.js",
     "app/detail/data.js",
     "app/data.ts"
-  ],
+, "app/InfiniteScrolling/data.ts", "app/InfiniteScrolling/page.tsx"  ],
   "exclude": ["node_modules"]
 }
