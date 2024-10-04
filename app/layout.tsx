@@ -41,9 +41,6 @@ export default function RootLayout({
         className={`dx-viewport ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* <InfiniteScroll /> */}
-        {/* <LocalArray /> */}
-        {/* <Stock /> */}
-        {/* <Detail /> */}
         {children}
       </body>
     </html>
